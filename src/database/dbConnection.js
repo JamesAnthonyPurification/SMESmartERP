@@ -5,11 +5,16 @@
 
 import path from 'node:path';
 import fs from 'node:fs';
+import os from 'node:os';
 import { DatabaseSync } from 'node:sqlite';
 import { CREATE_TABLES_SQL } from './schema.js';
 import { seedInitialData } from './seedData.js';
 
-const DB_DIR = path.join(process.cwd(), 'data');
+// On Vercel the project folder is read-only; only the temp dir is writable.
+// The database there is re-seeded whenever a fresh server instance starts.
+const DB_DIR = process.env.VERCEL
+  ? path.join(os.tmpdir(), 'smarterp')
+  : path.join(process.cwd(), 'data');
 const DB_PATH = path.join(DB_DIR, 'smarterp.sqlite');
 
 // Optional PostgreSQL Connection Config (if DATABASE_URL is set in .env)
